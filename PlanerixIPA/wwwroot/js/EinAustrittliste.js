@@ -3,9 +3,9 @@ document.getElementById("token").innerHTML = "Token: " + token;
 //Logout
 function logout() {
     sessionStorage.clear();
-    window.location= "login.html"
+    window.location = "login.html"
 }
-//Abteilung select
+//AbteilungSelect
 fetch("api/abteilung", {
     headers: {
         'Authorization': token
@@ -25,13 +25,12 @@ fetch("api/abteilung", {
             sel.add(opt, null);
         })
     })
-//Abfrage durchführen
 function dataAbsenden() {
     document.getElementById("fehler").innerHTML = "";
     var von = document.getElementById("von").value;
     var bis = document.getElementById("bis").value;
     var options = document.getElementById("abteilung").options;
-    var uri = "api/geburtstag?von=" + von + "&bis=" + bis;
+    var uri = "api/einaustrittliste?von=" + von + "&bis=" + bis;
     for (var i = 0, iLen = options.length; i < iLen; i++) {
         opt = options[i];
         if (opt.selected) {
@@ -47,13 +46,12 @@ function dataAbsenden() {
         .then(response => {
             if (response.status == "200") {
                 return response.json();
-            } else if (response.status == "401"){
+            } else if (response.status == "401") {
                 throw new Error("HTTP status " + response.status);
-            }else {
-                document.getElementById("tabelleGeburtstagsliste").innerHTML = "";
+            } else {
+                document.getElementById("tabelleEinAustritte").innerHTML = "";
                 document.getElementById("link").innerHTML = "Link: ";
                 response.text().then(data => { document.getElementById("fehler").innerHTML = data.replace(/\"/g, "") });
-                
             }
         })
         .then(data => {
@@ -62,10 +60,9 @@ function dataAbsenden() {
         .catch(error => document.getElementById("fehler").innerHTML = "Unauthorized");
 }
 function machTabelle(mitarbeiter) {
-    var tabelle = document.getElementById("tabelleGeburtstagsliste");
-    tabelle.innerHTML = ""
+    var tabelle = document.getElementById("tabelleEinAustritte");
+    tabelle.innerHTML = "";
     mitarbeiter.forEach(mit => {
-        //Tabelleneinträge erstellen
         var tr = document.createElement("tr");
 
         var tdName = document.createElement("td");
@@ -76,6 +73,21 @@ function machTabelle(mitarbeiter) {
         tdVorname.innerHTML = mit.vorname;
         tr.appendChild(tdVorname);
 
+        var tdEintritt = document.createElement("td");
+        tdEintritt.innerHTML = mit.eintritt;
+        tr.appendChild(tdEintritt);
+       
+
+        var tdAustritt = document.createElement("td");
+        if (mit.austritt != null) {
+            tdAustritt.innerHTML = mit.austritt;
+        } else {
+            tdAustritt.innerHTML = "-";
+        }
+
+        tr.appendChild(tdAustritt);
+
+
         var tdAbteilung = document.createElement("td");
         var abteilung = ""
         mit.abteilungen.forEach(abt => {
@@ -84,26 +96,7 @@ function machTabelle(mitarbeiter) {
         tdAbteilung.innerHTML = abteilung.substring(0, abteilung.length - 1)
         tr.appendChild(tdAbteilung)
 
-        var tdAlter = document.createElement("td");
-        tdAlter.innerHTML = mit.alter;
-        tr.appendChild(tdAlter);
 
-        var tdDatum = document.createElement("td");
-        tdDatum.innerHTML = mit.datum;
-        tr.appendChild(tdDatum);
-
-        //Tabelle färben
-        //runder geburtstag
-        if (mit.alter % 10 == 0) {
-            tr.style.backgroundColor = "lightgreen";
-        }
-        //heute geburtstag
-        var geburtstdatumSplit = mit.datum.split(".");
-        var dt = new Date(geburtstdatumSplit[2] + "-" + geburtstdatumSplit[1] + "-" + geburtstdatumSplit[0])
-        var heute = new Date()
-        if (dt.getDate() == heute.getDate() && dt.getMonth() == heute.getMonth() && dt.getFullYear() == heute.getFullYear()) {
-            tr.style.backgroundColor = "yellow";
-        }
 
         tabelle.appendChild(tr);
     })

@@ -32,7 +32,7 @@ namespace PlanerixIPA.Controllers
             }
             if (von.Value.Date > bis.Value.Date)
             {
-                return new BadRequestObjectResult("Von muss kleiner oder gleich als bis sein.");
+                return new BadRequestObjectResult("Von muss kleiner oder gleich Bis sein.");
             }
             //Filtern der Daten
             var mitarbeiter = new List<GeburtstagslisteViewModel>();
