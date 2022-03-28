@@ -5,7 +5,7 @@ function logout() {
     sessionStorage.clear();
     window.location= "login.html"
 }
-//Abteilung select
+//AbteilungSelect erstellen
 fetch("api/abteilung", {
     headers: {
         'Authorization': token
@@ -99,7 +99,7 @@ function machTabelle(mitarbeiter) {
         }
         //heute geburtstag
         var geburtstdatumSplit = mit.datum.split(".");
-        var dt = new Date(geburtstdatumSplit[2] + "-" + geburtstdatumSplit[1] + "-" + geburtstdatumSplit[0])
+        var dt = new Date(geburtstdatumSplit[2] + "-" + geburtstdatumSplit[1] + "-" + geburtstdatumSplit[0]);
         var heute = new Date()
         if (dt.getDate() == heute.getDate() && dt.getMonth() == heute.getMonth() && dt.getFullYear() == heute.getFullYear()) {
             tr.style.backgroundColor = "yellow";

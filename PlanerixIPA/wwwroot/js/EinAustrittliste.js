@@ -5,7 +5,7 @@ function logout() {
     sessionStorage.clear();
     window.location = "login.html"
 }
-//AbteilungSelect
+//AbteilungSelect erstellen
 fetch("api/abteilung", {
     headers: {
         'Authorization': token
@@ -25,6 +25,7 @@ fetch("api/abteilung", {
             sel.add(opt, null);
         })
     })
+//Abfrage erstellen
 function dataAbsenden() {
     document.getElementById("fehler").innerHTML = "";
     var von = document.getElementById("von").value;
@@ -49,15 +50,21 @@ function dataAbsenden() {
             } else if (response.status == "401") {
                 throw new Error("HTTP status " + response.status);
             } else {
+                if (myChart != null) {
+                    myChart.destroy();
+                }
                 document.getElementById("tabelleEinAustritte").innerHTML = "";
                 document.getElementById("link").innerHTML = "Link: ";
                 response.text().then(data => { document.getElementById("fehler").innerHTML = data.replace(/\"/g, "") });
             }
         })
         .then(data => {
-            machTabelle(data)
+            //Tabelle erstellen
+            machTabelle(data);
+            //Diagramm erstellen
+            statistik(data);
         })
-        .catch(error => document.getElementById("fehler").innerHTML = "Unauthorized");
+        
 }
 function machTabelle(mitarbeiter) {
     var tabelle = document.getElementById("tabelleEinAustritte");
@@ -76,17 +83,27 @@ function machTabelle(mitarbeiter) {
         var tdEintritt = document.createElement("td");
         tdEintritt.innerHTML = mit.eintritt;
         tr.appendChild(tdEintritt);
-       
+        //Zeile färben wenn zukünftiger Eintritt
+        var eintrittSplit = mit.eintritt.split(".");
+        var heute = new Date();
+        var eintrittDate = new Date(eintrittSplit[2] + "-" + eintrittSplit[1] + "-" + eintrittSplit[0])
+        if (eintrittDate > heute) {
+            tr.style.backgroundColor = "yellow";
+        }
 
         var tdAustritt = document.createElement("td");
         if (mit.austritt != null) {
             tdAustritt.innerHTML = mit.austritt;
+            //Zelle färben wenn zukünftiger Austritt
+            var austrittSplit = mit.austritt.split(".");
+            var austrittDate = new Date(austrittSplit[2] + "-" + austrittSplit[1] + "-" + austrittSplit[0])
+            if (austrittDate > heute) {
+                tr.style.backgroundColor = "yellow";
+            }
         } else {
             tdAustritt.innerHTML = "-";
         }
-
         tr.appendChild(tdAustritt);
-
 
         var tdAbteilung = document.createElement("td");
         var abteilung = ""
@@ -96,8 +113,69 @@ function machTabelle(mitarbeiter) {
         tdAbteilung.innerHTML = abteilung.substring(0, abteilung.length - 1)
         tr.appendChild(tdAbteilung)
 
-
-
         tabelle.appendChild(tr);
     })
+}
+//chart erstellen
+var myChart = null;
+function statistik(mitarbeiter) {
+    var von = new Date(document.getElementById("von").value);
+    var bis = new Date(document.getElementById("bis").value);
+    var label = ["Eintritt", "Austritt"];
+    var eintritt = 0;
+    var austritt = 0;
+    //Anzahl Ein- und Austritte zählen.
+    mitarbeiter.forEach(mit => {
+        if (mit.eintritt != null) {
+            var eintrittSplit = mit.eintritt.split(".");
+            var eintrittDate = new Date(eintrittSplit[2] + "-" + eintrittSplit[1] + "-" + eintrittSplit[0])
+            if (eintrittDate.getTime() >= von.getTime() && eintrittDate.getTime() <= bis.getTime()) {
+                eintritt++;
+            }
+        }
+        if (mit.austritt != null) {
+            var austrittSplit = mit.austritt.split(".");
+            var austrittDate = new Date(austrittSplit[2] + "-" + austrittSplit[1] + "-" + austrittSplit[0])
+            if (austrittDate.getTime() >= von.getTime() && austrittDate.getTime() <= bis.getTime()) {
+                austritt++;
+            }
+        }
+    })
+    var einAus = [eintritt, austritt];
+    var canvas = document.getElementById('myChart');
+    if (myChart != null) {
+        myChart.destroy();
+    }
+    //chart darstellen
+    myChart = new Chart(canvas, {
+        type: 'pie',
+        data: {
+            labels: label,
+            datasets: [{
+                label: '# of Votes',
+                data: einAus,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Anzahl Ein- und Austritte",
+                    font: {
+                        size: 14
+                    }
+                }
+            }
+        }
+    });
 }
