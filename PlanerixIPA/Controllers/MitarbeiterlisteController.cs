@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlanerixIPA.Models;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace PlanerixIPA.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MitarbeiterlisteController : ControllerBase
@@ -26,38 +28,18 @@ namespace PlanerixIPA.Controllers
             {
                 return new BadRequestObjectResult("Stichpunkttag ist ein Pflichtfeld");
             }
-            var mitarbeiterliste = _context.Mitarbeiters.Where(mit => datum.Value.Date >= mit.Eintritt.Value.Date &&(mit.Austritt == null || datum.Value.Date <= mit.Austritt.Value.Date))
+            var mitarbeiterliste = _context.Mitarbeiters.Where(mit => datum.Value.Date >= mit.Eintritt.Value.Date &&(mit.Austritt == null || datum.Value.Date <= mit.Austritt.Value.Date)
+                     && (name == null || mit.Name.Equals(name)) //Name filtern
+                     && (vorname == null || mit.Vorname.Equals(vorname)) //Vorname filtern
+                     && (abteilungen.Length == 0 || mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => abt.Equals(am.Abteilung.Bezeichnung)))) //Abteilung filtern
+                     && (programme.Length == 0 || mit.ProgrammMitarbeiters.Any(pm => programme.Any(prog => prog.Equals(pm.Programm.Bezeichnung)))) //Programm filtern
+                     && (funktionen.Length == 0 || mit.FunktionMitarbeiters.Any(fm => funktionen.Any(funk => funk.Equals(fm.Funktion.Bezeichnung))))) //Funktion filtern
                     .Include(mit => mit.AbteilungMitarbeiters).ThenInclude(am => am.Abteilung)
                     .Include(mit => mit.ProgrammMitarbeiters).ThenInclude(pm => pm.Programm)
                     .Include(mit => mit.FunktionMitarbeiters).ThenInclude(fm => fm.Funktion).ToList();
-            //Nach Name sortieren
-            if(name != null)
+            if (mitarbeiterliste.Count == 0)
             {
-                mitarbeiterliste = mitarbeiterliste.Where(mit => mit.Name.Equals(name)).ToList();
-            }
-            //Nach Vorname sortieren
-            if (vorname != null)
-            {
-                mitarbeiterliste = mitarbeiterliste.Where(mit => mit.Vorname.Equals(vorname)).ToList();
-            }
-            //Nach Abteilung sortieren
-            if(abteilungen.Length > 0)
-            {
-                mitarbeiterliste = mitarbeiterliste.Where(mit => mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => am.Abteilung.Bezeichnung.Equals(abt)))).ToList();
-            }
-            //Nach Funktionen sortieren
-            if (funktionen.Length > 0)
-            {
-                mitarbeiterliste = mitarbeiterliste.Where(mit => mit.FunktionMitarbeiters.Any(fm => funktionen.Any(funk => fm.Funktion.Bezeichnung.Equals(funk)))).ToList();
-            }
-            //Nach Programme sortieren
-            if (programme.Length > 0)
-            {
-                mitarbeiterliste = mitarbeiterliste.Where(mit => mit.ProgrammMitarbeiters.Any(pm => programme.Any(prog => pm.Programm.Bezeichnung.Equals(prog)))).ToList();
-            }
-            if(mitarbeiterliste.Count() == 0)
-            {
-                return new BadRequestObjectResult("Keine Mitarbeitende zu diesen Parametern");
+                return new BadRequestObjectResult("Keine Mitarbeitende zu diesen Parametern.");
             }
             //ViewModel erstellen
             List<MitarbeiterlisteViewModel> mlvml = new List<MitarbeiterlisteViewModel>();

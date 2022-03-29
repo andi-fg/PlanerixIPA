@@ -49,14 +49,10 @@ namespace PlanerixIPA.Controllers
                 }
                 //Geburtstage heruasfinden
                 var jahrGeburtstag = _context.Mitarbeiters.Where(mit => (mit.Geburtsdatum.Value.Month > von.Value.Month || (mit.Geburtsdatum.Value.Day >= von.Value.Day && mit.Geburtsdatum.Value.Month == von.Value.Month))
-                    && (mit.Geburtsdatum.Value.Month < bisFilter.Month || (mit.Geburtsdatum.Value.Day <= bisFilter.Day && mit.Geburtsdatum.Value.Month == bisFilter.Month)))
+                    && (mit.Geburtsdatum.Value.Month < bisFilter.Month || (mit.Geburtsdatum.Value.Day <= bisFilter.Day && mit.Geburtsdatum.Value.Month == bisFilter.Month))
+                    && (abteilungen.Length == 0 || mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => abt.Equals(am.Abteilung.Bezeichnung))))) //Abteilung filtern
                     .OrderBy(mit => mit.Geburtsdatum.Value.Month).ThenBy(mit => mit.Geburtsdatum.Value.Day)
                     .Include(mit => mit.AbteilungMitarbeiters).ThenInclude(am => am.Abteilung).ToList();
-                //Abteilungern heruasfinden
-                if(abteilungen.Length > 0)
-                {
-                    jahrGeburtstag = jahrGeburtstag.Where(mit => mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => abt == am.Abteilung.Bezeichnung))).ToList();
-                }
                 mitarbeiter.AddRange(GetMitarbeiterAlsViewModel(jahrGeburtstag,jahr));
                 von = new DateTime(jahr + 1, 01, 01);
             }

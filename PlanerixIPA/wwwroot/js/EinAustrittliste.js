@@ -48,6 +48,7 @@ function dataAbsenden() {
             if (response.status == "200") {
                 return response.json();
             } else if (response.status == "401") {
+                document.getElementById("fehler").innerHTML = "Unauthorized";
                 throw new Error("HTTP status " + response.status);
             } else {
                 if (myChart != null) {

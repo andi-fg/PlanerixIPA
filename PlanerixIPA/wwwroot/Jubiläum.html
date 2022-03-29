@@ -17,10 +17,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" href="Geburtstagsliste.html">Geburtstagsliste</a>
-                    <a class="nav-link active" aria-current="page" href="EinAustrittliste.html">Ein-Austrittliste</a>
+                    <a class="nav-link " href="Geburtstagsliste.html">Geburtstagsliste</a>
+                    <a class="nav-link " href="EinAustrittliste.html">Ein-Austrittliste</a>
                     <a class="nav-link" href="Mitarbeiterliste.html">Mitarbeiterliste</a>
-                    <a class="nav-link " href="Jubiläum.html">Jubiläumsliste</a>
+                    <a class="nav-link active" aria-current="page" href="Jubiläum.html">Jubiläumsliste</a>
                     <a class="nav-link" href="#">Ein-Austrittmonat</a>
                 </div>
             </div>
@@ -31,27 +31,15 @@
         <br />
         <div class="row">
             <div class="col">
-                <h1 style="text-align:center">Planerix - EinAustrittliste</h1>
+                <h1 style="text-align:center">Planerix - Jubiläumsliste</h1>
             </div>
         </div>
         <div class="row">
-            <div class="col-2">
-                Von*:
-            </div>
-            <div class="col-2">
-                Bis*:
-            </div>
             <div class="col-2">
                 Abteilung(en):
             </div>
         </div>
         <div class="row">
-            <div class="col-2">
-                <input type="date" id="von" name="von" class="form-control">
-            </div>
-            <div class="col-2">
-                <input type="date" id="bis" name="bis" class="form-control">
-            </div>
             <div class="col-2">
                 <select name="abteilung" id="abteilung" class="form-control" multiple>
                 </select>
@@ -79,17 +67,14 @@
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Vorname</th>
+                        <th scope="col">Dienstalter in Jahren</th>
+                        <th scope="col">Zeit bis nächstes Jubiläum</th>
                         <th scope="col">Eintritt</th>
-                        <th scope="col">Austritt</th>
-                        <th scope="col">Abteilung(en)</th>
                     </tr>
                 </thead>
-                <tbody id="tabelleEinAustritte">
+                <tbody id="tabelleJubiläum">
                 </tbody>
             </table>
-            <div id="output">
-                <canvas id="myChart"></canvas>
-            </div>
         </div>
     </div>
     <div class="container footer mt-auto">
@@ -99,10 +84,8 @@
             </div>
         </footer>
     </div>
-    <script src="js/EinAustrittliste.js"></script>
+    <script src="js/Jubiläum.js"></script>
     <!--Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <!--Chart.js-->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

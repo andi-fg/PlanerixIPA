@@ -25,20 +25,19 @@ fetch("api/abteilung", {
             sel.add(opt, null);
         })
     })
-//Abfrage durchführen
+//Daten zum start absenden um direkt eine Liste zu generieren
+dataAbsenden();
+//Daten absenden und Liste erhalten
 function dataAbsenden() {
     document.getElementById("fehler").innerHTML = "";
-    var von = document.getElementById("von").value;
-    var bis = document.getElementById("bis").value;
-    var options = document.getElementById("abteilung").options;
-    var uri = "api/geburtstag?von=" + von + "&bis=" + bis;
-    for (var i = 0, iLen = options.length; i < iLen; i++) {
-        opt = options[i];
+    var uri = "api/jubiläum?"
+    var abteilungOptions = document.getElementById("abteilung").options;
+    for (var i = 0, iLen = abteilungOptions.length; i < iLen; i++) {
+        opt = abteilungOptions[i];
         if (opt.selected) {
             uri += "&abteilungen=" + opt.value;
         }
     }
-    document.getElementById("link").innerHTML = "Link: https://localhost:44338/" + uri;
     fetch(uri, {
         headers: {
             'Authorization': token
@@ -46,26 +45,27 @@ function dataAbsenden() {
     })
         .then(response => {
             if (response.status == "200") {
+                document.getElementById("link").innerHTML = "Link: https://localhost:44338/" + uri;
                 return response.json();
             } else if (response.status == "401") {
                 document.getElementById("fehler").innerHTML = "Unauthorized";
                 throw new Error("HTTP status " + response.status);
-            }else {
-                document.getElementById("tabelleGeburtstagsliste").innerHTML = "";
+            } else {
+                document.getElementById("tabelleJubiläum").innerHTML = "";
                 document.getElementById("link").innerHTML = "Link: ";
                 response.text().then(data => { document.getElementById("fehler").innerHTML = data.replace(/\"/g, "") });
-                
+                throw new Error("HTTP status " + response.status);
             }
         })
         .then(data => {
-            machTabelle(data)
+            //Tabelle erstellen
+            machTabelle(data);
         })
 }
 function machTabelle(mitarbeiter) {
-    var tabelle = document.getElementById("tabelleGeburtstagsliste");
-    tabelle.innerHTML = ""
+    var tabelle = document.getElementById("tabelleJubiläum");
+    tabelle.innerHTML = "";
     mitarbeiter.forEach(mit => {
-        //Tabelleneinträge erstellen
         var tr = document.createElement("tr");
 
         var tdName = document.createElement("td");
@@ -76,34 +76,17 @@ function machTabelle(mitarbeiter) {
         tdVorname.innerHTML = mit.vorname;
         tr.appendChild(tdVorname);
 
-        var tdAbteilung = document.createElement("td");
-        var abteilung = ""
-        mit.abteilungen.forEach(abt => {
-            abteilung += abt + ","
-        })
-        tdAbteilung.innerHTML = abteilung.substring(0, abteilung.length - 1)
-        tr.appendChild(tdAbteilung)
+        var tdDienst = document.createElement("td");
+        tdDienst.innerHTML = mit.dienstjahre;
+        tr.appendChild(tdDienst);
 
-        var tdAlter = document.createElement("td");
-        tdAlter.innerHTML = mit.alter;
-        tr.appendChild(tdAlter);
+        var tdNaechst = document.createElement("td");
+        tdNaechst.innerHTML = mit.nächstes;
+        tr.appendChild(tdNaechst);
 
-        var tdDatum = document.createElement("td");
-        tdDatum.innerHTML = mit.datum;
-        tr.appendChild(tdDatum);
-
-        //Tabelle färben
-        //runder geburtstag
-        if (mit.alter % 10 == 0) {
-            tr.style.backgroundColor = "lightgreen";
-        }
-        //heute geburtstag
-        var geburtstdatumSplit = mit.datum.split(".");
-        var dt = new Date(geburtstdatumSplit[2] + "-" + geburtstdatumSplit[1] + "-" + geburtstdatumSplit[0]);
-        var heute = new Date()
-        if (dt.getDate() == heute.getDate() && dt.getMonth() == heute.getMonth() && dt.getFullYear() == heute.getFullYear()) {
-            tr.style.backgroundColor = "yellow";
-        }
+        var tdEintritt = document.createElement("td");
+        tdEintritt.innerHTML = mit.eintritt;
+        tr.appendChild(tdEintritt);
 
         tabelle.appendChild(tr);
     })

@@ -35,14 +35,10 @@ namespace PlanerixIPA.Controllers
                 return new BadRequestObjectResult("Von darf nicht später als Bis sein.");
             }
             //Nach den Ein- und Austritte in diesem Zeitpunkt filtern
-            var mitarbeiter = _context.Mitarbeiters.Where(mit => mit.Eintritt.Value.Date >= von.Value.Date && mit.Eintritt.Value.Date <= bis.Value.Date
+            var mitarbeiter = _context.Mitarbeiters.Where(mit => (mit.Eintritt.Value.Date >= von.Value.Date && mit.Eintritt.Value.Date <= bis.Value.Date
                         || mit.Austritt.Value.Date >= von.Value.Date && mit.Austritt.Value.Date <= bis.Value.Date)
+                        && (abteilungen.Length == 0 || mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => abt.Equals(am.Abteilung.Bezeichnung))))) //Nach Abteilung filtern
                         .Include(mit => mit.AbteilungMitarbeiters).ThenInclude(am => am.Abteilung).ToList();
-            //Abteilungen überprüfen
-            if(abteilungen.Length > 0)
-            {
-                mitarbeiter = mitarbeiter.Where(mit => mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => abt == am.Abteilung.Bezeichnung))).ToList();
-            }
             if (mitarbeiter.Count == 0)
             {
                 return new BadRequestObjectResult("Keine Daten gefunden.");
