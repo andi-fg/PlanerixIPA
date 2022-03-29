@@ -17,7 +17,6 @@ namespace PlanerixIPA.Controllers
     public class EinAustrittlisteController : ControllerBase
     {
         private readonly PlanerixContext _context;
-
         public EinAustrittlisteController(PlanerixContext context)
         {
             _context = context;
@@ -33,7 +32,7 @@ namespace PlanerixIPA.Controllers
             }
             if (von.Value.Date > bis.Value.Date)
             {
-                return new BadRequestObjectResult("Von muss kleiner oder gleich Bis sein.");
+                return new BadRequestObjectResult("Von darf nicht später als Bis sein.");
             }
             //Nach den Ein- und Austritte in diesem Zeitpunkt filtern
             var mitarbeiter = _context.Mitarbeiters.Where(mit => mit.Eintritt.Value.Date >= von.Value.Date && mit.Eintritt.Value.Date <= bis.Value.Date

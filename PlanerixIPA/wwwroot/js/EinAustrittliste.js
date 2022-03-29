@@ -3,7 +3,7 @@ document.getElementById("token").innerHTML = "Token: " + token;
 //Logout
 function logout() {
     sessionStorage.clear();
-    window.location = "login.html"
+    window.location = "login.html";
 }
 //AbteilungSelect erstellen
 fetch("api/abteilung", {
@@ -56,6 +56,7 @@ function dataAbsenden() {
                 document.getElementById("tabelleEinAustritte").innerHTML = "";
                 document.getElementById("link").innerHTML = "Link: ";
                 response.text().then(data => { document.getElementById("fehler").innerHTML = data.replace(/\"/g, "") });
+                throw new Error("HTTP status " + response.status);
             }
         })
         .then(data => {
@@ -92,16 +93,14 @@ function machTabelle(mitarbeiter) {
         }
 
         var tdAustritt = document.createElement("td");
-        if (mit.austritt != null) {
-            tdAustritt.innerHTML = mit.austritt;
+        tdAustritt.innerHTML = mit.austritt;
+        if (mit.austritt.length > 1) {
             //Zelle färben wenn zukünftiger Austritt
             var austrittSplit = mit.austritt.split(".");
             var austrittDate = new Date(austrittSplit[2] + "-" + austrittSplit[1] + "-" + austrittSplit[0])
             if (austrittDate > heute) {
                 tr.style.backgroundColor = "yellow";
             }
-        } else {
-            tdAustritt.innerHTML = "-";
         }
         tr.appendChild(tdAustritt);
 

@@ -20,7 +20,6 @@ namespace PlanerixIPA.Controllers
     {
         private readonly PlanerixContext _context;
         private readonly IConfiguration _configuration;
-
         public LoginController(PlanerixContext context, IConfiguration configuration)
         {
             _context = context;

@@ -16,7 +16,6 @@ namespace PlanerixIPA.Controllers
     public class GeburtstagController : ControllerBase
     {
         private readonly PlanerixContext _context;
-
         public GeburtstagController(PlanerixContext context)
         {
             _context = context;

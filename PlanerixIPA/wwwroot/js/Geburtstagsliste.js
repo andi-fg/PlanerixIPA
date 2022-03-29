@@ -3,7 +3,7 @@ document.getElementById("token").innerHTML = "Token: " + token;
 //Logout
 function logout() {
     sessionStorage.clear();
-    window.location= "login.html"
+    window.location = "login.html";
 }
 //AbteilungSelect erstellen
 fetch("api/abteilung", {

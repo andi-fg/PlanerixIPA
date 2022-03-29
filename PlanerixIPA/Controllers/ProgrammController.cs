@@ -12,18 +12,19 @@ namespace PlanerixIPA.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AbteilungController : ControllerBase
+    public class ProgrammController : ControllerBase
     {
         private readonly PlanerixContext _context;
-        public AbteilungController(PlanerixContext context)
+
+        public ProgrammController(PlanerixContext context)
         {
             _context = context;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAbteilung()
+        public async Task<IActionResult> GetProgramm()
         {
-            var abteilung = _context.Abteilungs.ToList();
-            return Ok(abteilung);
+            var programm = _context.Programms.ToList();
+            return Ok(programm);
         }
     }
 }
