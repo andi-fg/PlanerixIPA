@@ -55,11 +55,21 @@ namespace PlanerixIPA.Controllers
                 var unterschiedJahr = jubiläumsdatum.Year - heute.Year;
                 var unterschiedMonat = jubiläumsdatum.Month - heute.Month;
                 var unterschiedTag = jubiläumsdatum.Day - heute.Day;
+                Console.WriteLine(jvm.Name);
                 if (unterschiedTag < 0)
                 {
                     unterschiedMonat--;
-                    var hilfsdatum = new DateTime(jubiläumsdatum.Year, jubiläumsdatum.Month, heute.Day);
-                    hilfsdatum = hilfsdatum.AddMonths(-1);
+                    //Überprüfen ob heute grösser als letzter Tag des Monats ist
+                    var d = heute.Day;
+                    var differenzLetzterTag = 0;
+                    var letzterTagMonat = new DateTime(jubiläumsdatum.Year, jubiläumsdatum.Month + 1, 01).AddDays(-1).Day;
+                    if (letzterTagMonat < d)
+                    {
+                        differenzLetzterTag = d - letzterTagMonat;
+                        d = letzterTagMonat;
+                    }
+                    var hilfsdatum = new DateTime(jubiläumsdatum.Year, jubiläumsdatum.Month, d);
+                    hilfsdatum = hilfsdatum.AddMonths(-1).AddDays(differenzLetzterTag);
                     var differenz = jubiläumsdatum - hilfsdatum;
                     unterschiedTag = differenz.Days;
                 }

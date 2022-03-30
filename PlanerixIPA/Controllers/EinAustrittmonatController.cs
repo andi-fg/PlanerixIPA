@@ -34,7 +34,7 @@ namespace PlanerixIPA.Controllers
             //Nach monat suchen
             for (int jahr = von.Value.Year; jahr <= bis.Value.Year; jahr++)
             {
-                var bisFilter = von.Value;
+                var bisFilter = bis.Value;
                 if (bisFilter.Year != jahr)
                 {
                     bisFilter = new DateTime(jahr, 12, 31);
@@ -48,14 +48,18 @@ namespace PlanerixIPA.Controllers
                     {
                         bisMonatEnde = new DateTime(jahr, monat + 1, 1).AddDays(-1);
                     }
-                    var eintritte = _context.Mitarbeiters.Where(mit => mit.Eintritt.Value.Date >= von.Value.Date && mit.Eintritt.Value.Date <= bisMonatEnde.Date).Count();
-
+                    var eintritte = _context.Mitarbeiters.Where(mit => mit.Eintritt.Value.Date >= von.Value.Date && mit.Eintritt.Value.Date <= bisMonatEnde.Date
+                            && (abteilungen.Length == 0 || mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => abt.Equals(am.Abteilung.Bezeichnung))))).Count();
+                    var austritte = _context.Mitarbeiters.Where(mit => mit.Austritt.Value.Date >= von.Value.Date && mit.Austritt.Value.Date <= bisMonatEnde.Date
+                            && (abteilungen.Length == 0 || mit.AbteilungMitarbeiters.Any(am => abteilungen.Any(abt => abt.Equals(am.Abteilung.Bezeichnung))))).Count();
+                    eavm.Austritte = austritte;
                     eavm.Eintritte = eintritte;
                     eavm.Monat = monat + "." + jahr;
                     if(monat != 12)
                     {
                         von = von.Value.AddMonths(1);
                     }
+                    eavml.Add(eavm); 
                 }
                 von = new DateTime(jahr + 1, 1, 1);
             }
