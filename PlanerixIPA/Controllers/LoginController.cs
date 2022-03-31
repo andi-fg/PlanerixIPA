@@ -40,6 +40,11 @@ namespace PlanerixIPA.Controllers
             {
                 return new BadRequestObjectResult("Logindaten ungültig.");
             }
+            //Überprüfen ob User aktiv ist
+            if (!benutzer.Aktiv)
+            {
+                return new BadRequestObjectResult("Benutzer ist nicht aktiv.");
+            }
             //Logindaten OK Token generieren und zurückgeben
             var authClaims = new List<Claim>
             {
