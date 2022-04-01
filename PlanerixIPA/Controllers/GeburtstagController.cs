@@ -21,7 +21,6 @@ namespace PlanerixIPA.Controllers
             _context = context;
         }
         [HttpGet]
-        //Link : api/geburtstag?von=2022-03-28&bis=2022-03-30&abteilungen=Kurhotel im Park&abteilungen=Service
         public async Task<IActionResult> GetGeburtstagsliste(DateTime? von, DateTime? bis,[FromQuery] string[]abteilungen)
         {
             //überprüfen ob Pflichfelder angegeben

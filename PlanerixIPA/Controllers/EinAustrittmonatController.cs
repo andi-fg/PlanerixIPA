@@ -13,10 +13,10 @@ namespace PlanerixIPA.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class EinAustrittmonatController : ControllerBase
+    public class EinAustrittMonatController : ControllerBase
     {
         private readonly PlanerixContext _context;
-        public EinAustrittmonatController(PlanerixContext context)
+        public EinAustrittMonatController(PlanerixContext context)
         {
             _context = context;
         }
@@ -32,8 +32,8 @@ namespace PlanerixIPA.Controllers
             {
                 return new BadRequestObjectResult("Von darf nicht später als Bis sein.");
             }
-            List<EinAustrittmonatViewModel> eavml = new List<EinAustrittmonatViewModel>();
-            //Nach monat suchen
+            List<EinAustrittMonatViewModel> eavml = new List<EinAustrittMonatViewModel>();
+            //Jahre durchgehen suchen
             for (int jahr = von.Value.Year; jahr <= bis.Value.Year; jahr++)
             {
                 var bisFilter = bis.Value;
@@ -44,7 +44,7 @@ namespace PlanerixIPA.Controllers
                 //Monate durchgehen
                 for(int monat = von.Value.Month; monat <= bisFilter.Month; monat++)
                 {
-                    EinAustrittmonatViewModel eavm = new EinAustrittmonatViewModel();
+                    EinAustrittMonatViewModel eavm = new EinAustrittMonatViewModel();
                     var bisMonatEnde = bisFilter;
                     if(bisMonatEnde.Month != monat)
                     {

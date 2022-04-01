@@ -55,7 +55,6 @@ namespace PlanerixIPA.Controllers
                 var unterschiedJahr = jubiläumsdatum.Year - heute.Year;
                 var unterschiedMonat = jubiläumsdatum.Month - heute.Month;
                 var unterschiedTag = jubiläumsdatum.Day - heute.Day;
-                Console.WriteLine(jvm.Name);
                 if (unterschiedTag < 0)
                 {
                     unterschiedMonat--;

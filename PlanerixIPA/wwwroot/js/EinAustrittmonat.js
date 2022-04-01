@@ -73,7 +73,6 @@ function machStatistik(einaustritte) {
         label.push(ea.monat);
     })
     var canvas = document.getElementById('einaustrittDiagramm');
-   // canvas.style.width = "200px";
     canvas.style.height = "300px";
     if (myChart != null) {
         myChart.destroy();

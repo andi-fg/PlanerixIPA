@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PlanerixIPA.Models.ViewModels
 {
-    public class EinAustrittmonatViewModel
+    public class EinAustrittMonatViewModel
     {
         public string Monat { get; set; }
         public int Eintritte { get; set; }
